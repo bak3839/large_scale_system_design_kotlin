@@ -20,4 +20,10 @@ class ArticleRepositoryTest {
             println("article = ${article}")
         }
     }
+
+    @Test
+    fun countTest() {
+        val count = articleRepository.count(1L, 10000L)
+        println("count = $count")
+    }
 }

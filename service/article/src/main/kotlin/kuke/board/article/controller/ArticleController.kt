@@ -4,6 +4,7 @@ import kuke.board.article.entity.Article
 import kuke.board.article.service.ArticleService
 import kuke.board.article.service.request.ArticleCreateRequest
 import kuke.board.article.service.request.ArticleUpdateRequest
+import kuke.board.article.service.response.ArticlePageResponse
 import kuke.board.article.service.response.ArticleResponse
 import org.springframework.web.bind.annotation.*
 
@@ -15,6 +16,15 @@ class ArticleController(
     @GetMapping("/{articleId}")
     fun read(@PathVariable articleId: Long): ArticleResponse {
         return articleService.read(articleId)
+    }
+
+    @GetMapping("/all")
+    fun readAll(
+        @RequestParam("boardId") boardId: Long,
+        @RequestParam("page") page: Long,
+        @RequestParam("pageSize") pageSize: Long,
+    ): ArticlePageResponse {
+        return articleService.readAll(boardId, page, pageSize)
     }
 
     @PostMapping("/create")

@@ -1,5 +1,6 @@
 package article.api
 
+import kuke.board.article.service.response.ArticlePageResponse
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
@@ -60,6 +61,20 @@ class ArticleApiTest {
         restClient.delete()
             .uri("/v1/articles/177332402605629440/delete")
             .retrieve()
+    }
+
+    @Test
+    fun readAllTest() {
+        val response = restClient.get()
+            .uri("/v1/articles/all?boardId=1&page=50000&pageSize=30")
+            .retrieve()
+            .body(ArticlePageResponse::class.java)
+
+        println("response.getArticleCount() = ${response?.articleCount}")
+
+        for(article in response!!.articles) {
+            println("article = $article")
+        }
     }
 
     companion object {

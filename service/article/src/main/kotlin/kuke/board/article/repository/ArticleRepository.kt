@@ -23,4 +23,18 @@ interface ArticleRepository: JpaRepository<Article, Long> {
         @Param("offset") offset: Long,
         @Param("limit") limit: Long
     ): List<Article>
+
+
+    @Query(
+        value =
+            """
+                select count(*) from (
+                    select article_id from article 
+                    where board_id = :boardId
+                    limit :limit
+                ) t
+            """,
+        nativeQuery = true
+    )
+    fun count(@Param("boardId") boardId: Long, @Param("limit") limit: Long): Long
 }

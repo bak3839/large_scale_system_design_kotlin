@@ -4,6 +4,7 @@ import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
 import kuke.board.article.service.request.ArticleCreateRequest
 import kuke.board.article.service.request.ArticleUpdateRequest
+import kuke.board.article.service.response.ArticlePageResponse
 import kuke.board.article.service.response.ArticleResponse
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.stereotype.Service
@@ -43,5 +44,17 @@ class ArticleService(
     @Transactional
     fun delete(articleId: Long) {
         articleRepository.deleteById(articleId)
+    }
+
+    fun readAll(boardId: Long, page: Long, pageSize: Long) :ArticlePageResponse {
+        return ArticlePageResponse.of(
+            articleRepository.findAll(boardId, (page - 1) * pageSize, pageSize)
+                .map(ArticleResponse::from)
+                .toList(),
+            articleRepository.count(
+                boardId,
+                PageCalculator.calculatePageLimit(page, pageSize, 10L)
+            )
+        )
     }
 }
