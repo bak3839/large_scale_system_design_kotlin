@@ -17,6 +17,9 @@ class Article(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var modifiedAt: LocalDateTime = LocalDateTime.now(),
 ) {
+    override fun toString(): String {
+        return "Article(articleId= $articleId, title= $title ,content= $content ,boardId= $boardId, writerId= $writerId , createdAt= $createdAt, modifiedAt= $modifiedAt)"
+    }
     fun update(title: String, content: String) {
         this.title = title
         this.content = content

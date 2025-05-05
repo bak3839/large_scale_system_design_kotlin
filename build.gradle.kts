@@ -5,7 +5,11 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 
     kotlin("plugin.serialization") version "1.8.0"
-    kotlin("plugin.jpa") version "1.9.22"
+    kotlin("plugin.jpa") version "1.9.25"
+
+    // kotlin에서 lombok 사용이 가능해지게 만들어주는 플러그인
+    kotlin("plugin.lombok") version "1.9.25"
+    id("io.freefair.lombok") version "8.1.0"
 }
 
 group = "scale"
@@ -18,6 +22,8 @@ allprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
+    apply(plugin = "org.jetbrains.kotlin.plugin.lombok")
+    apply(plugin = "io.freefair.lombok")
 
     java {
         toolchain {
@@ -33,8 +39,18 @@ allprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+        // Lombok 의존성
+        compileOnly("org.projectlombok:lombok:1.18.30")
+        annotationProcessor("org.projectlombok:lombok:1.18.30")
+
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+        testImplementation(kotlin("test"))
+
+        // 테스트 코드에서도 @Slf4j 사용 가능하게
+        testCompileOnly("org.projectlombok:lombok:1.18.30")
+        testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
+
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
