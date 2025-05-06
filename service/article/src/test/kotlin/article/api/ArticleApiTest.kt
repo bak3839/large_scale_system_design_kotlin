@@ -2,6 +2,7 @@ package article.api
 
 import kuke.board.article.service.response.ArticlePageResponse
 import org.junit.jupiter.api.Test
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 
@@ -74,6 +75,30 @@ class ArticleApiTest {
 
         for(article in response!!.articles) {
             println("article = $article")
+        }
+    }
+
+    @Test
+    fun readAllInfiniteScrollTest() {
+        val articles = restClient.get()
+            .uri("/v1/articles/infinite-scroll?boardId=1&pageSize=30")
+            .retrieve()
+            .body(object : ParameterizedTypeReference<List<ArticleResponse>>() {})
+
+
+        println("firstPage")
+        articles?.forEach {
+            println("articleResponse.getArticleId() = ${it.articleId}")
+        }
+
+        val lastArticleId = articles?.last()?.articleId
+        val articles2 = restClient.get()
+            .uri("/v1/articles/infinite-scroll?boardId=1&pageSize=30&lastArticleId=$lastArticleId")
+            .retrieve()
+            .body(object : ParameterizedTypeReference<List<ArticleResponse>>() {})
+
+        articles2?.forEach {
+            println("articleResponse.getArticleId() = ${it.articleId}")
         }
     }
 

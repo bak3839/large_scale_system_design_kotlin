@@ -68,6 +68,6 @@ interface ArticleRepository: JpaRepository<Article, Long> {
     fun findAllInfiniteScroll(
         @Param("boardId") boardId: Long,
         @Param("limit") limit: Long,
-        @Param("lastArticleId") lastArticleId: Long
+        @Param("lastArticleId") lastArticleId: Long?
     ): List<Article>
 }

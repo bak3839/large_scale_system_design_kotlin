@@ -57,4 +57,12 @@ class ArticleService(
             )
         )
     }
+
+    fun readAllInfiniteScroll(boardId: Long, pageSize: Long, lastArticleId: Long?):List<ArticleResponse> {
+        val articles = lastArticleId?.let {
+            articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId)
+        } ?: articleRepository.findAllInfiniteScroll(boardId, pageSize)
+
+        return articles.map(ArticleResponse::from).toList()
+    }
 }
