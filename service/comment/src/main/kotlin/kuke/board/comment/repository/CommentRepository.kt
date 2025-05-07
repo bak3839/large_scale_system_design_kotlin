@@ -14,7 +14,7 @@ interface CommentRepository: JpaRepository<Comment, Long> {
                 select count(*) from (
                     select comment_id from comment
                     where article_id = :articleId and parent_comment_id = :parentCommentId
-                    limit = :limit
+                    limit :limit
                 ) t
             """,
         nativeQuery = true

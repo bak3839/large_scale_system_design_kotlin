@@ -60,11 +60,11 @@ class CommentService(
     }
 
     private fun hasChildren(comment: Comment): Boolean
-    = commentRepository.countBy(comment.articleId, comment.parentCommentId, 2L) == 2L
+    = commentRepository.countBy(comment.articleId, comment.commentId, 2L) == 2L
 
     private fun delete(comment: Comment) {
         commentRepository.delete(comment)
-
+        println("---------- delete complete")
         // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
         if(!comment.isRoot()) {
             commentRepository.findById(comment.parentCommentId)
