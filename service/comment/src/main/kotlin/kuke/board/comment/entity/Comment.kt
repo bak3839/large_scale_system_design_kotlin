@@ -31,4 +31,7 @@ class Comment(
     }
 
     fun isRoot() = parentCommentId == commentId
+    fun delete() {
+        deleted = true
+    }
 }

@@ -23,5 +23,5 @@ interface CommentRepository: JpaRepository<Comment, Long> {
         @Param("articleId") articleId: Long,
         @Param("parentCommentId") parentCommentId: Long,
         @Param("limit") limit: Long
-    ): Int
+    ): Long
 }

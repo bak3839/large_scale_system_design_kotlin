@@ -53,18 +53,19 @@ class CommentService(
             .filter(Predicate.not(Comment::deleted))
             .ifPresent {
                 when(hasChildren(it)) {
-                    true -> it.deleted = true
+                    true -> it.delete()
                     false -> delete(it)
                 }
             }
     }
 
     private fun hasChildren(comment: Comment): Boolean
-    = commentRepository.countBy(comment.articleId, comment.parentCommentId, 2L) == 2
+    = commentRepository.countBy(comment.articleId, comment.parentCommentId, 2L) == 2L
 
     private fun delete(comment: Comment) {
         commentRepository.delete(comment)
 
+        // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
         if(!comment.isRoot()) {
             commentRepository.findById(comment.parentCommentId)
                 .filter(Comment::deleted)
