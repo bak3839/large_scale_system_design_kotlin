@@ -59,6 +59,9 @@ allprojects {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testImplementation(kotlin("test"))
 
+        testImplementation("io.mockk:mockk:1.13.8")
+        testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+
         // 테스트 코드에서도 @Slf4j 사용 가능하게
         testCompileOnly("org.projectlombok:lombok:1.18.30")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
