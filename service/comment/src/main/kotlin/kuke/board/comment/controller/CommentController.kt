@@ -2,6 +2,7 @@ package kuke.board.comment.controller
 
 import kuke.board.comment.service.CommentService
 import kuke.board.comment.service.request.CommentCreateRequest
+import kuke.board.comment.service.response.CommentPageResponse
 import kuke.board.comment.service.response.CommentResponse
 import org.springframework.web.bind.annotation.*
 
@@ -25,5 +26,24 @@ class CommentController(
     @DeleteMapping("/delete/{commentId}")
     fun delete(@PathVariable("commentId") commentId: Long) {
         commentService.delete(commentId)
+    }
+
+    @GetMapping("/readAll")
+    fun read(
+        @RequestParam("articleId") articleId: Long,
+        @RequestParam("pageSize") pageSize: Long,
+        @RequestParam("page") page: Long,
+    ): CommentPageResponse {
+        return commentService.readAll(articleId, page, pageSize)
+    }
+
+    @GetMapping("/readAll/infinite-scroll")
+    fun readInfiniteScroll(
+        @RequestParam("articleId") articleId: Long,
+        @RequestParam("lastParentCommentId") lastParentCommentId: Long?,
+        @RequestParam("lastCommentId") lastCommentId: Long?,
+        @RequestParam("pageSize") pageSize: Long
+    ): List<CommentResponse> {
+        return commentService.readAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId, pageSize)
     }
 }

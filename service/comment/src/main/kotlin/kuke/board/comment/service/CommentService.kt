@@ -3,6 +3,7 @@ package kuke.board.comment.service
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.repository.CommentRepository
 import kuke.board.comment.service.request.CommentCreateRequest
+import kuke.board.comment.service.response.CommentPageResponse
 import kuke.board.comment.service.response.CommentResponse
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.stereotype.Service
@@ -72,5 +73,22 @@ class CommentService(
                 .filter(Predicate.not(this::hasChildren))
                 .ifPresent(this::delete)
         }
+    }
+
+    fun readAll(articleId: Long, page: Long, pageSize: Long): CommentPageResponse {
+        return CommentPageResponse.of(
+            commentRepository.findAll(articleId, (page - 1) * pageSize, pageSize)
+                .map(CommentResponse::from)
+            ,commentRepository.count(articleId, PageCalculator.calculatePageLimit(page, pageSize, 10))
+        )
+    }
+
+    fun readAllInfiniteScroll(articleId: Long, lastParentCommentId: Long?, lastCommentId: Long?, limit: Long): List<CommentResponse> {
+        val comments = if (lastParentCommentId == null || lastCommentId == null)
+            commentRepository.findAllInfiniteScroll(articleId, limit)
+        else
+            commentRepository.findAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId, limit)
+
+        return comments.map(CommentResponse::from)
     }
 }

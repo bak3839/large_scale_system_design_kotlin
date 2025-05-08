@@ -67,6 +67,7 @@ interface CommentRepository: JpaRepository<Comment, Long> {
                 from comment
                 where article_id = :articleId
                 order by comment.parent_comment_id asc, comment.comment_id asc
+                limit :limit
             """,
         nativeQuery = true
     )
@@ -86,6 +87,7 @@ interface CommentRepository: JpaRepository<Comment, Long> {
                     (parent_comment_id = :lastParentCommentId and comment_id > :lastCommentId)
                 )
                 order by comment.parent_comment_id asc, comment.comment_id asc
+                limit :limit
             """,
         nativeQuery = true
     )
