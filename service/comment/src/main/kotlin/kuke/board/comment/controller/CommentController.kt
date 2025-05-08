@@ -40,8 +40,8 @@ class CommentController(
     @GetMapping("/readAll/infinite-scroll")
     fun readInfiniteScroll(
         @RequestParam("articleId") articleId: Long,
-        @RequestParam("lastParentCommentId") lastParentCommentId: Long?,
-        @RequestParam("lastCommentId") lastCommentId: Long?,
+        @RequestParam(value = "lastParentCommentId", required = false) lastParentCommentId: Long?,
+        @RequestParam(value = "lastCommentId", required = false) lastCommentId: Long?,
         @RequestParam("pageSize") pageSize: Long
     ): List<CommentResponse> {
         return commentService.readAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId, pageSize)
