@@ -49,8 +49,10 @@ class CommentPath(
         return create(increase(childrenTopPath))
     }
 
+    // 오름차순으로 정렬되기 때문에 가장 큰 path 값이 마지막 댓글
+    // 다음 경로를 알기 위해서는 descendantsTopPath 구한 후
+    // 댓글을 추가할 계층의 길이만큼 자르고 + 1
     // descendantsTopPath -> childrenTopPath 찾기위해 존재
-    // descendantsTopPath 구하고
     private fun findChildrenTopPath(descendantsTopPath: String): String
             = descendantsTopPath.substring(0, (getDepth() + 1) * DEPTH_CHUNK_SIZE)
 

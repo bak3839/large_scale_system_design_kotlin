@@ -19,5 +19,14 @@ class CommentV2(
     var deleted : Boolean = false,
     val createdAt : LocalDateTime = LocalDateTime.now()
 ) {
+    companion object {
+        fun create(commentId: Long, content: String, articleId: Long, writerId: Long, commentPath: CommentPath): CommentV2 {
+            return CommentV2(commentId, content, articleId, writerId, commentPath)
+        }
+    }
 
+    fun isRoot(): Boolean = commentPath.isRoot()
+    fun delete() {
+        deleted = true
+    }
 }
