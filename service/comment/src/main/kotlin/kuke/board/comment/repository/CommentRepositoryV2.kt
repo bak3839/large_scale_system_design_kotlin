@@ -8,7 +8,7 @@ import java.util.Optional
 
 interface CommentRepositoryV2 : JpaRepository<CommentV2, Long> {
 
-    @Query("select c from CommentV2 c where c.commentPath = :path")
+    @Query("select c from CommentV2 c where c.commentPath.path = :path")
     fun findByPath(
         @Param("path") path: String,
     ): Optional<CommentV2>

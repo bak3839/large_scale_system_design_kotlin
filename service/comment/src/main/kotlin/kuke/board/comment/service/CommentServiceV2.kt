@@ -1,5 +1,6 @@
 package kuke.board.comment.service
 
+import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.entity.CommentV2
 import kuke.board.comment.repository.CommentRepositoryV2
@@ -44,5 +45,43 @@ class CommentServiceV2(
                 .filter(Predicate.not(CommentV2::deleted))
                 .orElseThrow()
         } ?: return null
+    }
+
+    fun read(commentId: Long): CommentResponse {
+        return CommentResponse.from(
+            commentRepositoryV2.findById(commentId).orElseThrow()
+        )
+    }
+
+    @Transactional
+    fun delete(commentId: Long) {
+        commentRepositoryV2.findById(commentId)
+            .filter(Predicate.not(CommentV2::deleted))
+            .ifPresent {
+                if(hasChildren(it)) {
+                    delete(it)
+                } else {
+                    it.delete()
+                }
+            }
+    }
+
+    private fun hasChildren(comment: CommentV2): Boolean {
+        return commentRepositoryV2.findDescendantsTopPath(
+            comment.articleId,
+            comment.commentPath.path
+        )?.let { true } ?: false
+    }
+
+    private fun delete(comment: CommentV2) {
+        commentRepositoryV2.delete(comment)
+        println("---------- delete complete")
+        // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
+        if(!comment.isRoot()) {
+            commentRepositoryV2.findByPath(comment.commentPath.getParentPath())
+                .filter(CommentV2::deleted)
+                .filter(Predicate.not(this::hasChildren))
+                .ifPresent(this::delete)
+        }
     }
 }
