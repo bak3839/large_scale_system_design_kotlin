@@ -30,22 +30,21 @@ class CommentControllerV2(
         commentService.delete(commentId)
     }
 
-//    @GetMapping("/readAll")
-//    fun read(
-//        @RequestParam("articleId") articleId: Long,
-//        @RequestParam("pageSize") pageSize: Long,
-//        @RequestParam("page") page: Long,
-//    ): CommentPageResponse {
-//        return commentService.readAll(articleId, page, pageSize)
-//    }
-//
-//    @GetMapping("/readAll/infinite-scroll")
-//    fun readInfiniteScroll(
-//        @RequestParam("articleId") articleId: Long,
-//        @RequestParam(value = "lastParentCommentId", required = false) lastParentCommentId: Long?,
-//        @RequestParam(value = "lastCommentId", required = false) lastCommentId: Long?,
-//        @RequestParam("pageSize") pageSize: Long
-//    ): List<CommentResponse> {
-//        return commentService.readAllInfiniteScroll(articleId, lastParentCommentId, lastCommentId, pageSize)
-//    }
+    @GetMapping("/readAll")
+    fun read(
+        @RequestParam("articleId") articleId: Long,
+        @RequestParam("pageSize") pageSize: Long,
+        @RequestParam("page") page: Long,
+    ): CommentPageResponse {
+        return commentService.readAll(articleId, page, pageSize)
+    }
+
+    @GetMapping("/readAll/infinite-scroll")
+    fun readInfiniteScroll(
+        @RequestParam("articleId") articleId: Long,
+        @RequestParam(value = "lastPath", required = false) lastPath: String?,
+        @RequestParam("pageSize") pageSize: Long
+    ): List<CommentResponse> {
+        return commentService.readAllInfiniteScroll(articleId, lastPath, pageSize)
+    }
 }

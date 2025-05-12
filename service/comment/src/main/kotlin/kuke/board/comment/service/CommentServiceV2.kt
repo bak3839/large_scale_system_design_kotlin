@@ -5,6 +5,7 @@ import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.entity.CommentV2
 import kuke.board.comment.repository.CommentRepositoryV2
 import kuke.board.comment.service.request.CommentCreateRequestV2
+import kuke.board.comment.service.response.CommentPageResponse
 import kuke.board.comment.service.response.CommentResponse
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.stereotype.Service
@@ -24,15 +25,17 @@ class CommentServiceV2(
             parent.commentPath
         } ?: CommentPath.create("")
 
-        val comment = commentRepositoryV2.save(CommentV2.create(
-            commentId = snowflake.nextId(),
-            content = request.content,
-            articleId = request.articleId,
-            writerId = request.writerId,
-            commentPath = parentCommentPath.createChildCommentPath(
-                commentRepositoryV2.findDescendantsTopPath(request.articleId, parentCommentPath.path)
+        val comment = commentRepositoryV2.save(
+            CommentV2.create(
+                commentId = snowflake.nextId(),
+                content = request.content,
+                articleId = request.articleId,
+                writerId = request.writerId,
+                commentPath = parentCommentPath.createChildCommentPath(
+                    commentRepositoryV2.findDescendantsTopPath(request.articleId, parentCommentPath.path)
+                )
             )
-        ))
+        )
 
         return CommentResponse.from(comment)
     }
@@ -58,7 +61,7 @@ class CommentServiceV2(
         commentRepositoryV2.findById(commentId)
             .filter(Predicate.not(CommentV2::deleted))
             .ifPresent {
-                if(hasChildren(it)) {
+                if (hasChildren(it)) {
                     delete(it)
                 } else {
                     it.delete()
@@ -77,11 +80,27 @@ class CommentServiceV2(
         commentRepositoryV2.delete(comment)
         println("---------- delete complete")
         // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
-        if(!comment.isRoot()) {
+        if (!comment.isRoot()) {
             commentRepositoryV2.findByPath(comment.commentPath.getParentPath())
                 .filter(CommentV2::deleted)
                 .filter(Predicate.not(this::hasChildren))
                 .ifPresent(this::delete)
         }
+    }
+
+    fun readAll(articleId: Long, page: Long, pageSize: Long): CommentPageResponse {
+        return CommentPageResponse.of(
+            commentRepositoryV2.findAll(articleId, (page - 1) * pageSize, pageSize)
+                .map(CommentResponse::from),
+            commentRepositoryV2.count(articleId, PageCalculator.calculatePageLimit(page, pageSize, 10L))
+        )
+    }
+
+    fun readAllInfiniteScroll(articleId: Long, lastPath: String?, pageSize: Long): List<CommentResponse> {
+        val comments = lastPath?.let {
+            commentRepositoryV2.findAllInfiniteScroll(articleId, lastPath, pageSize)
+        } ?: commentRepositoryV2.findAllInfiniteScroll(articleId, pageSize)
+
+        return comments.map(CommentResponse::from)
     }
 }

@@ -1,8 +1,10 @@
 package kuke.board.comment.api
 
 import kuke.board.comment.service.request.CommentCreateRequestV2
+import kuke.board.comment.service.response.CommentPageResponse
 import kuke.board.comment.service.response.CommentResponse
 import org.junit.jupiter.api.Test
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 
@@ -56,6 +58,66 @@ class CommentApiTestV2 {
             .uri("/v2/comments/delete/179976767819329536")
             .retrieve()
     }
+
+    @Test
+    fun readAll() {
+        val response = restClient.get()
+            .uri("/v2/comments/readAll?articleId=1&page=50000&pageSize=10")
+            .retrieve()
+            .body(CommentPageResponse::class.java)
+
+        println("response.commentCount = ${response?.commentCount}")
+        response?.comments?.forEach { println("comment.commentId = ${it.commentId}") }
+        /**
+         * response.commentCount = 101
+         * comment.commentId = 179980695442100230
+         * comment.commentId = 179980695542763526
+         * comment.commentId = 179980695542763534
+         * comment.commentId = 179980695542763542
+         * comment.commentId = 179980695542763549
+         * comment.commentId = 179980695542763559
+         * comment.commentId = 179980695542763565
+         * comment.commentId = 179980695546957827
+         * comment.commentId = 179980695546957835
+         * comment.commentId = 179980695546957845
+         *
+         * response.commentCount = 500001
+         * comment.commentId = 179980857400955334
+         * comment.commentId = 179980857400955335
+         * comment.commentId = 179980857400955336
+         * comment.commentId = 179980857400955337
+         * comment.commentId = 179980857400955338
+         * comment.commentId = 179980857400955339
+         * comment.commentId = 179980857400955340
+         * comment.commentId = 179980857400955341
+         * comment.commentId = 179980857400955342
+         * comment.commentId = 179980857400955343
+         */
+    }
+
+    @Test
+    fun readAllInfiniteScroll() {
+        val response1 = restClient.get()
+            .uri("/v2/comments/readAll/infinite-scroll?articleId=1&pageSize=5")
+            .retrieve()
+            .body(object : ParameterizedTypeReference<List<CommentResponse>>(){
+            })
+
+        println("firstPage")
+        response1?.forEach { println("response1.commentId = ${it.commentId}") }
+
+        val lastPath = response1?.last()?.path
+
+        val response2 = restClient.get()
+            .uri("/v2/comments/readAll/infinite-scroll?articleId=1&pageSize=5&lastPath=${lastPath}")
+            .retrieve()
+            .body(object : ParameterizedTypeReference<List<CommentResponse>>(){
+            })
+
+        println("secondPage")
+        response2?.forEach { println("response2.commentId = ${it.commentId}") }
+    }
+
 
     companion object {
         data class CommentCreateRequestV2(
