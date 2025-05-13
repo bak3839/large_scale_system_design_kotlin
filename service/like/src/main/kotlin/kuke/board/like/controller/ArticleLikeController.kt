@@ -22,19 +22,58 @@ class ArticleLikeController(
         return articleService.read(articleId, userId)
     }
 
-    @PostMapping("/articles/{articleId}/users/{userId}")
-    fun like(
-        @PathVariable("articleId") articleId: Long,
-        @PathVariable("userId") userId: Long,
-    ) {
-        articleService.like(articleId, userId)
+    @GetMapping("/articles/{articleId}/count")
+    fun count(
+        @PathVariable("articleId") articleId: Long
+    ): Long {
+        return articleService.count(articleId)
     }
 
-    @DeleteMapping("/articles/{articleId}/users/{userId}")
-    fun unlike(
+    @PostMapping("/articles/{articleId}/users/{userId}/pessimistic-lock1")
+    fun likePessimisticLock1(
         @PathVariable("articleId") articleId: Long,
         @PathVariable("userId") userId: Long,
     ) {
-        articleService.unlike(articleId, userId)
+        articleService.likePessimisticLock1(articleId, userId)
+    }
+
+    @DeleteMapping("/articles/{articleId}/users/{userId}/pessimistic-lock1")
+    fun unlikePessimisticLock1(
+        @PathVariable("articleId") articleId: Long,
+        @PathVariable("userId") userId: Long,
+    ) {
+        articleService.unlikePessimisticLock1(articleId, userId)
+    }
+
+    @PostMapping("/articles/{articleId}/users/{userId}/pessimistic-lock2")
+    fun likePessimisticLock2(
+        @PathVariable("articleId") articleId: Long,
+        @PathVariable("userId") userId: Long,
+    ) {
+        articleService.likePessimisticLock2(articleId, userId)
+    }
+
+    @DeleteMapping("/articles/{articleId}/users/{userId}/pessimistic-lock2")
+    fun unlikePessimisticLock2(
+        @PathVariable("articleId") articleId: Long,
+        @PathVariable("userId") userId: Long,
+    ) {
+        articleService.unlikePessimisticLock2(articleId, userId)
+    }
+
+    @PostMapping("/articles/{articleId}/users/{userId}/optimistic-lock")
+    fun likeOptimisticLock(
+        @PathVariable("articleId") articleId: Long,
+        @PathVariable("userId") userId: Long,
+    ) {
+        articleService.likePessimisticLock2(articleId, userId)
+    }
+
+    @DeleteMapping("/articles/{articleId}/users/{userId}/optimistic-lock")
+    fun unlikeOptimisticLock(
+        @PathVariable("articleId") articleId: Long,
+        @PathVariable("userId") userId: Long,
+    ) {
+        articleService.unlikePessimisticLock2(articleId, userId)
     }
 }
