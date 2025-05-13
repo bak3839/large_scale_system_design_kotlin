@@ -69,7 +69,7 @@ class ArticleLikeService(
         )
 
         val articleLikeCount = (articleLikeCountRepository.findLockedByArticleId(articleId)
-            ?: ArticleLikeCount.init(articleId, 1L))
+            ?: ArticleLikeCount.init(articleId, 0L))
         articleLikeCount.increase()
         articleLikeCountRepository.save(articleLikeCount)
     }

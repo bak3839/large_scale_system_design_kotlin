@@ -66,7 +66,7 @@ class ArticleLikeController(
         @PathVariable("articleId") articleId: Long,
         @PathVariable("userId") userId: Long,
     ) {
-        articleService.likePessimisticLock2(articleId, userId)
+        articleService.likeOptimisticLock(articleId, userId)
     }
 
     @DeleteMapping("/articles/{articleId}/users/{userId}/optimistic-lock")
@@ -74,6 +74,6 @@ class ArticleLikeController(
         @PathVariable("articleId") articleId: Long,
         @PathVariable("userId") userId: Long,
     ) {
-        articleService.unlikePessimisticLock2(articleId, userId)
+        articleService.unlikeOptimisticLock(articleId, userId)
     }
 }
