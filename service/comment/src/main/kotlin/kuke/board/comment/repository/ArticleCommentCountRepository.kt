@@ -10,7 +10,7 @@ interface ArticleCommentCountRepository: JpaRepository<ArticleCommentCount, Long
     @Query(
         value =
             """
-                update article_comment_count set comment_count = comment_count + 1 where articleId = :articleId
+                update article_comment_count set comment_count = comment_count + 1 where article_id = :articleId
             """,
         nativeQuery = true
     )
@@ -20,7 +20,7 @@ interface ArticleCommentCountRepository: JpaRepository<ArticleCommentCount, Long
     @Query(
         value =
             """
-                update board_article_count set comment_count = comment_count - 1 where articleId = :articleId
+                update article_comment_count set comment_count = comment_count - 1 where article_id = :articleId
             """,
         nativeQuery = true
     )

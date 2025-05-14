@@ -118,6 +118,28 @@ class CommentApiTestV2 {
         response2?.forEach { println("response2.commentId = ${it.commentId}") }
     }
 
+    @Test
+    fun countTest() {
+        val response1 = create(CommentCreateRequestV2(4L, "comment1", null, 1L))
+
+        val count1 = restClient.get()
+            .uri("v2/comments/articles/4/count")
+            .retrieve()
+            .body(Long::class.java)
+
+        println("count1 = $count1")
+
+        restClient.delete()
+            .uri("v2/comments/delete/${response1?.commentId}")
+            .retrieve()
+
+        val count2 = restClient.get()
+            .uri("v2/comments/articles/4/count")
+            .retrieve()
+            .body(Long::class.java)
+
+        println("count2 = $count2")
+    }
 
     companion object {
         data class CommentCreateRequestV2(

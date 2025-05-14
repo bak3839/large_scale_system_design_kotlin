@@ -71,9 +71,9 @@ class CommentServiceV2(
             .filter(Predicate.not(CommentV2::deleted))
             .ifPresent {
                 if (hasChildren(it)) {
-                    delete(it)
-                } else {
                     it.delete()
+                } else {
+                    delete(it)
                 }
             }
 
@@ -87,6 +87,7 @@ class CommentServiceV2(
     }
 
     private fun delete(comment: CommentV2) {
+        println("-------------- delete comment ${comment.articleId}")
         commentRepositoryV2.delete(comment)
         articleCommentCountRepository.decrease(comment.articleId)
         // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
