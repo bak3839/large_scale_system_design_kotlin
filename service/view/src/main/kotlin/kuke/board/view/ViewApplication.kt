@@ -1,11 +1,11 @@
-package kuke.board.article
+package kuke.board.view
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class ArticleApplication
+class ViewApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(ArticleApplication::class.java, *args)
+    SpringApplication.run(ViewApplication::class.java, *args)
 }
