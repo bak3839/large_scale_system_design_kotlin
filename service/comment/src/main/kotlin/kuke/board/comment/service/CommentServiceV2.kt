@@ -1,8 +1,10 @@
 package kuke.board.comment.service
 
+import kuke.board.comment.entity.ArticleCommentCount
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.entity.CommentV2
+import kuke.board.comment.repository.ArticleCommentCountRepository
 import kuke.board.comment.repository.CommentRepositoryV2
 import kuke.board.comment.service.request.CommentCreateRequestV2
 import kuke.board.comment.service.response.CommentPageResponse
@@ -14,7 +16,8 @@ import java.util.function.Predicate
 
 @Service
 class CommentServiceV2(
-    private val commentRepositoryV2: CommentRepositoryV2
+    private val commentRepositoryV2: CommentRepositoryV2,
+    private val articleCommentCountRepository: ArticleCommentCountRepository
 ) {
     private val snowflake = Snowflake()
 
@@ -37,6 +40,12 @@ class CommentServiceV2(
             )
         )
 
+        val result = articleCommentCountRepository.increase(request.articleId)
+        if(result == 0) {
+            articleCommentCountRepository.save(
+                ArticleCommentCount.init(articleId = request.articleId, commentCount = 1L)
+            )
+        }
         return CommentResponse.from(comment)
     }
 
@@ -67,6 +76,7 @@ class CommentServiceV2(
                     it.delete()
                 }
             }
+
     }
 
     private fun hasChildren(comment: CommentV2): Boolean {
@@ -78,7 +88,7 @@ class CommentServiceV2(
 
     private fun delete(comment: CommentV2) {
         commentRepositoryV2.delete(comment)
-        println("---------- delete complete")
+        articleCommentCountRepository.decrease(comment.articleId)
         // 상위 댓글을 검사해서 deleted = true 이면 삭제 진행
         if (!comment.isRoot()) {
             commentRepositoryV2.findByPath(comment.commentPath.getParentPath())
@@ -103,4 +113,9 @@ class CommentServiceV2(
 
         return comments.map(CommentResponse::from)
     }
+
+    fun count(articleId: Long): Long
+    = articleCommentCountRepository.findById(articleId)
+        .map(ArticleCommentCount::commentCount)
+        .orElse(0L)
 }
