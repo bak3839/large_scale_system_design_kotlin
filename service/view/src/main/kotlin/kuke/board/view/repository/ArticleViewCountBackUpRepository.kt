@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface ArticleViewCountBackUpRepository: JpaRepository<ArticleViewCount, Long> {
+    fun findByArticleId(articleId: Long): ArticleViewCount?
+
     @Query(
         value =
             """
