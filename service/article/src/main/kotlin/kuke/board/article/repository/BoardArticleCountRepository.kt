@@ -10,7 +10,7 @@ interface BoardArticleCountRepository: JpaRepository<BoardArticleCount, Long> {
     @Query(
         value =
             """
-                update board_article_count set like_count = like_count + 1 where board_id = :board_id
+                update board_article_count set article_count = article_count + 1 where board_id = :board_id
             """,
         nativeQuery = true
     )
@@ -20,7 +20,7 @@ interface BoardArticleCountRepository: JpaRepository<BoardArticleCount, Long> {
     @Query(
         value =
             """
-                update board_article_count set like_count = like_count - 1 where board_id = :board_id
+                update board_article_count set article_count = article_count - 1 where board_id = :board_id
             """,
         nativeQuery = true
     )

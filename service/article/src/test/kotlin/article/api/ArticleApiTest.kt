@@ -102,6 +102,36 @@ class ArticleApiTest {
         }
     }
 
+    @Test
+    fun countTest() {
+        val response = create(
+            ArticleCreateRequest(
+                title = "Hi",
+                content = "content!",
+                writerId = 1L,
+                boardId = 2L
+            )
+        )
+
+        val count1 = restClient.get()
+            .uri("/v1/articles/boards/2/count")
+            .retrieve()
+            .body(Long::class.java)
+
+        println("count1 = $count1")
+
+        restClient.delete()
+            .uri("/v1/articles/${response?.articleId}/delete")
+            .retrieve()
+
+        val count2 = restClient.get()
+            .uri("/v1/articles/boards/2/count")
+            .retrieve()
+            .body(Long::class.java)
+
+        println("count2 = $count2")
+    }
+
     companion object {
         data class ArticleCreateRequest(
             val title: String,
