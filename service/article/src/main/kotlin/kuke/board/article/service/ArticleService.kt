@@ -1,7 +1,9 @@
 package kuke.board.article.service
 
 import kuke.board.article.entity.Article
+import kuke.board.article.entity.BoardArticleCount
 import kuke.board.article.repository.ArticleRepository
+import kuke.board.article.repository.BoardArticleCountRepository
 import kuke.board.article.service.request.ArticleCreateRequest
 import kuke.board.article.service.request.ArticleUpdateRequest
 import kuke.board.article.service.response.ArticlePageResponse
@@ -12,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ArticleService(
-    private val articleRepository: ArticleRepository
+    private val articleRepository: ArticleRepository,
+    private val boardArticleCountRepository: BoardArticleCountRepository
 ) {
     private val snowflake: Snowflake = Snowflake()
 
@@ -28,6 +31,12 @@ class ArticleService(
             )
         )
 
+        val result = boardArticleCountRepository.increase(request.boardId)
+        if(result == 0) {
+            boardArticleCountRepository.save(
+                BoardArticleCount.init(boardId = request.boardId, articleCount = 1L)
+            )
+        }
         return ArticleResponse.from(article)
     }
 
@@ -43,7 +52,9 @@ class ArticleService(
 
     @Transactional
     fun delete(articleId: Long) {
-        articleRepository.deleteById(articleId)
+        val article = articleRepository.findById(articleId).orElseThrow()
+        articleRepository.delete(article)
+        boardArticleCountRepository.decrease(article.boardId)
     }
 
     fun readAll(boardId: Long, page: Long, pageSize: Long) :ArticlePageResponse {
@@ -65,4 +76,9 @@ class ArticleService(
 
         return articles.map(ArticleResponse::from).toList()
     }
+
+    fun count(boardId: Long): Long
+    = boardArticleCountRepository.findById(boardId)
+        .map(BoardArticleCount::articleCount)
+        .orElse(0L)
 }
