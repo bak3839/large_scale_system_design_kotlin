@@ -17,7 +17,7 @@ class ViewApiTest {
         for(i in 1..10000) {
             executors.submit {
                 restClient.post()
-                    .uri("/v1/article-views/articles/1/users/1")
+                    .uri("/v1/article-views/articles/5/users/1")
                     .retrieve()
 
                 latch.countDown()
@@ -27,7 +27,7 @@ class ViewApiTest {
         latch.await()
 
         val count = restClient.get()
-            .uri("/v1/article-views/articles/1/count")
+            .uri("/v1/article-views/articles/5/count")
             .retrieve()
             .body(Long::class.java)
 
