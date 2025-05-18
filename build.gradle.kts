@@ -50,6 +50,8 @@ allprojects {
     dependencies {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("ch.qos.logback:logback-classic")
+        implementation ("io.github.microutils:kotlin-logging:3.0.5")
 
         // Lombok 의존성
         compileOnly("org.projectlombok:lombok:1.18.30")
