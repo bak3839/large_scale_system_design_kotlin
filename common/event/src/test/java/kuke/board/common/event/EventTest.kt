@@ -1,8 +1,7 @@
 package kuke.board.common.event
 
 import kuke.board.common.event.payload.ArticleCreatedEventPayload
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -34,6 +33,7 @@ class EventTest {
         val result = Event.fromJson(json)
 
         // then
+        assertNotNull(result)
         result?.also {
             assertEquals(event.eventId, it.eventId)
             assertEquals(event.type, it.type)
@@ -41,7 +41,8 @@ class EventTest {
         }
 
         val resultPayload = result?.payload as ArticleCreatedEventPayload?
-
+        
+        assertNotNull(resultPayload)
         resultPayload?.also {
             assertEquals(it.articleId, payload.articleId)
             assertEquals(it.title, payload.title)

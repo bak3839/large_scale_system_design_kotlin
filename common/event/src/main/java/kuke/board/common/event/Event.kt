@@ -1,5 +1,7 @@
 package kuke.board.common.event
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonProcessingException
 import kuke.board.common.DataSerializer
 
@@ -30,10 +32,10 @@ class Event<T: EventPayload>(
             )
         }
 
-        private class EventRaw(
-            val eventId: Long = 0L,
-            val type: String = "",
-            val payload: Any = ""
+        private class EventRaw @JsonCreator constructor(
+            @JsonProperty("eventId") val eventId: Long,
+            @JsonProperty("type") val type: String,
+            @JsonProperty("payload") val payload: Any
         )
     }
 }
