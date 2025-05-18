@@ -6,7 +6,7 @@ import mu.KotlinLogging
 // 이벤트들이 어떤 페이로드를 가지는지 알려줌
 enum class EventType(
     // 어떤 페이로드 타입인지
-    private val payloadClass: Class<out EventPayload>,
+    val payloadClass: Class<out EventPayload>,
     // 어떤 토픽으로 전달되는지
     private val topic: String
 ) {

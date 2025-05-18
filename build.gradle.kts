@@ -53,6 +53,9 @@ allprojects {
         implementation("ch.qos.logback:logback-classic")
         implementation ("io.github.microutils:kotlin-logging:3.0.5")
 
+        // kotlin 직렬화
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
         // Lombok 의존성
         compileOnly("org.projectlombok:lombok:1.18.30")
         annotationProcessor("org.projectlombok:lombok:1.18.30")
