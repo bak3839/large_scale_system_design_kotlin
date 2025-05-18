@@ -4,11 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import lombok.extern.slf4j.Slf4j
 import mu.KotlinLogging
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
-@Slf4j
 object DataSerializer {
     private val log = KotlinLogging.logger {}
 
