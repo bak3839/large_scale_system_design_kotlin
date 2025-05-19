@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import kuke.board.common.event.EventPayload
 import java.time.LocalDateTime
 
-
 class ArticleCreatedEventPayload @JsonCreator constructor(
     @JsonProperty("articleId") val articleId: Long,
     @JsonProperty("title") val title: String,

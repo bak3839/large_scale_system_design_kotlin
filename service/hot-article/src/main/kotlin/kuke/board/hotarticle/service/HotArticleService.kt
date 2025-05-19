@@ -6,7 +6,10 @@ import kuke.board.common.event.EventType
 import kuke.board.hotarticle.client.ArticleClient
 import kuke.board.hotarticle.repository.HotArticleListRepository
 import kuke.board.hotarticle.service.eventhandler.EventHandler
+import kuke.board.hotarticle.service.response.HotArticleResponse
 import org.springframework.stereotype.Service
+import java.util.Objects
+import java.util.Objects.nonNull
 
 @Service
 class HotArticleService(
@@ -30,4 +33,11 @@ class HotArticleService(
 
     private fun isArticleCreatedOrDeleted(event: Event<EventPayload>): Boolean
     = EventType.ARTICLE_CREATED == event.type || EventType.ARTICLE_DELETED == event.type
+
+    fun readAll(dateStr: String): List<HotArticleResponse> {
+        val result = hotArticleListRepository.readAll(dateStr) ?: return emptyList()
+        return result
+            .mapNotNull(articleClient::read) // 원본 데이터 가져오기
+            .map(HotArticleResponse::from)
+    }
 }

@@ -14,4 +14,4 @@ class ArticleDeletedEventPayload @JsonCreator constructor(
     @JsonProperty("createdAt") val createdAt: LocalDateTime,
     @JsonProperty("modifiedAt") val modifiedAt: LocalDateTime,
     @JsonProperty("boardArticleCount") val boardArticleCount: Long
-): EventPayload
+) : EventPayload

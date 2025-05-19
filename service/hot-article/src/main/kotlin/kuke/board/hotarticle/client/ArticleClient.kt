@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 
 @Component
-class ArticleClient {
+open class ArticleClient {
     private lateinit var restClient: RestClient
     private val log = KotlinLogging.logger {}
 
