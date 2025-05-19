@@ -1,15 +1,17 @@
 package kuke.board.common.event.payload
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import kuke.board.common.event.EventPayload
 import java.time.LocalDateTime
 
-class ArticleUpdatedEventPayload(
-    private val articleId: Long,
-    private val title: String,
-    private val content: String,
-    private val boardId: Long,
-    private val writerId: Long,
-    private val createdAt: LocalDateTime,
-    private val modifiedAt: LocalDateTime
+class ArticleUpdatedEventPayload @JsonCreator constructor(
+    @JsonProperty("articleId") val articleId: Long,
+    @JsonProperty("title") val title: String,
+    @JsonProperty("content") val content: String,
+    @JsonProperty("boardId") val boardId: Long,
+    @JsonProperty("writerId") val writerId: Long,
+    @JsonProperty("createdAt") val createdAt: LocalDateTime,
+    @JsonProperty("modifiedAt") val modifiedAt: LocalDateTime,
 ): EventPayload {
 }
