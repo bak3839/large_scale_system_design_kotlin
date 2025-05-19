@@ -29,7 +29,10 @@ class HotArticleService(
     }
 
     private fun findEventHandler(event: Event<EventPayload>): EventHandler<EventPayload>?
-    = eventHandlers.firstOrNull { it.supports(event) }
+    = eventHandlers.stream()
+        .filter { it.supports(event) }
+        .findAny()
+        .orElse(null);
 
     private fun isArticleCreatedOrDeleted(event: Event<EventPayload>): Boolean
     = EventType.ARTICLE_CREATED == event.type || EventType.ARTICLE_DELETED == event.type
