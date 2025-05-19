@@ -12,7 +12,7 @@ class ArticleClient {
     private lateinit var restClient: RestClient
     private val log = KotlinLogging.logger {}
 
-    @Value("\${enpoints.board-article-service.url}")
+    @Value("\${endpoints.board-article-service.url}")
     private lateinit var articleServerUrl: String
 
     @PostConstruct
