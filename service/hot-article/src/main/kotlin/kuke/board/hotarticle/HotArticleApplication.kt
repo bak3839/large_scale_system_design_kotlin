@@ -1,11 +1,11 @@
-package kuke.board.article
+package kuke.board.hotarticle
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class ArticleApplication
+class HotArticleApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(ArticleApplication::class.java, *args)
+    SpringApplication.run(HotArticleApplication::class.java, *args)
 }
