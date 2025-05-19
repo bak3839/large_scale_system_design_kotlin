@@ -6,7 +6,7 @@ import kuke.board.common.event.payload.ArticleUnlikedEventPayload
 import kuke.board.hotarticle.repository.ArticleLikeCountRepository
 import kuke.board.hotarticle.utils.TimeCalculatorUtils
 
-class ArticleUnlikedHandler(
+class ArticleUnlikedEventHandler(
     private val articleLikeCountRepository: ArticleLikeCountRepository
 ): EventHandler<ArticleUnlikedEventPayload> {
     override fun handle(event: Event<ArticleUnlikedEventPayload>) {
