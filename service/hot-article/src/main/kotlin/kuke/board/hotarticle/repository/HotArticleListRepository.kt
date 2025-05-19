@@ -1,17 +1,12 @@
 package kuke.board.hotarticle.repository
 
-import mu.KLogger
 import mu.KotlinLogging
 import org.springframework.data.redis.connection.StringRedisConnection
-import org.springframework.data.redis.core.RedisCallback
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.StringRedisTemplate
-import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Repository
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.streams.toList
 
 @Repository
 class HotArticleListRepository(

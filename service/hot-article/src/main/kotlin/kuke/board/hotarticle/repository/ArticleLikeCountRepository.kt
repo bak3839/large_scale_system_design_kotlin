@@ -1,9 +1,10 @@
 package kuke.board.hotarticle.repository
 
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.stereotype.Repository
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 
+@Repository
 class ArticleLikeCountRepository(
     private val redisTemplate: StringRedisTemplate
 ) {
