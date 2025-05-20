@@ -33,10 +33,10 @@ enum class EventType(
 
         class Topic() {
             companion object {
-                val KUKE_BOARD_ARTICLE = "kuke-board-article"
-                val KUKE_BOARD_COMMENT = "kuke-board-comment"
-                val KUKE_BOARD_LIKE = "kuke-board-like"
-                val KUKE_BOARD_VIEW = "kuke-board-view"
+                const val KUKE_BOARD_ARTICLE = "kuke-board-article"
+                const val KUKE_BOARD_COMMENT = "kuke-board-comment"
+                const val KUKE_BOARD_LIKE = "kuke-board-like"
+                const val KUKE_BOARD_VIEW = "kuke-board-view"
             }
         }
     }
