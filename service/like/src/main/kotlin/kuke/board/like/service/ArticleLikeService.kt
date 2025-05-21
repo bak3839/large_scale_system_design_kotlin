@@ -1,5 +1,9 @@
 package kuke.board.like.service
 
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.ArticleLikedEventPayload
+import kuke.board.common.event.payload.ArticleUnlikedEventPayload
+import kuke.board.common.outboxmessagerelay.OutboxEventPublisher
 import kuke.board.common.snowflake.Snowflake
 import kuke.board.like.entity.ArticleLike
 import kuke.board.like.entity.ArticleLikeCount
@@ -12,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ArticleLikeService(
     private val articleLikeRepository: ArticleLikeRepository,
-    private val articleLikeCountRepository: ArticleLikeCountRepository
+    private val articleLikeCountRepository: ArticleLikeCountRepository,
+    private val outboxEventPublisher: OutboxEventPublisher
 ) {
     private val snowflake = Snowflake()
 
@@ -44,6 +49,18 @@ class ArticleLikeService(
                 ArticleLikeCount.init(articleId, 1L)
             )
         }
+
+        outboxEventPublisher.publish(
+            EventType.ARTICLE_LIKED,
+            ArticleLikedEventPayload(
+                articleLikeId = articleLike.articleLikeId,
+                articleId = articleLike.articleId,
+                userId = articleLike.userId,
+                createdAt = articleLike.createdAt,
+                articleLikeCount = count(articleLike.articleId)
+            ),
+            articleLike.articleId
+        )
     }
 
     @Transactional
@@ -52,6 +69,18 @@ class ArticleLikeService(
             ?.let {
                 articleLikeRepository.delete(it)
                 articleLikeCountRepository.decrease(articleId)
+
+                outboxEventPublisher.publish(
+                    EventType.ARTICLE_UNLIKED,
+                    ArticleUnlikedEventPayload(
+                        articleLikeId = it.articleLikeId,
+                        articleId = it.articleId,
+                        userId = it.userId,
+                        createdAt = it.createdAt,
+                        articleLikeCount = count(it.articleId)
+                    ),
+                    it.articleId
+                )
             }
     }
 
