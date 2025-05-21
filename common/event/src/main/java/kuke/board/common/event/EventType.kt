@@ -8,7 +8,7 @@ enum class EventType(
     // 어떤 페이로드 타입인지
     val payloadClass: Class<out EventPayload>,
     // 어떤 토픽으로 전달되는지
-    private val topic: String
+    val topic: String
 ) {
     ARTICLE_CREATED(ArticleCreatedEventPayload::class.java, Topic.KUKE_BOARD_ARTICLE),
     ARTICLE_UPDATED(ArticleUpdatedEventPayload::class.java, Topic.KUKE_BOARD_ARTICLE),

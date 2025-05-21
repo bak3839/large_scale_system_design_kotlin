@@ -8,12 +8,12 @@ import java.time.LocalDateTime
 @Table(name = "outbox")
 class Outbox(
     @Id
-    private val outboxId: Long,
+    val outboxId: Long,
     @Enumerated(EnumType.STRING)
-    private val eventType: EventType,
-    private val payload: String,
-    private val shardKey: Long,
-    private val createdAt: LocalDateTime = LocalDateTime.now(),
+    val eventType: EventType,
+    val payload: String,
+    val shardKey: Long,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 ) {
     companion object {
         fun create(outboxId: Long, eventType: EventType, payload: String, shardKey: Long): Outbox
