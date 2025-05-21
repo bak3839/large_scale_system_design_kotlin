@@ -9,6 +9,10 @@ import kuke.board.comment.repository.CommentRepositoryV2
 import kuke.board.comment.service.request.CommentCreateRequestV2
 import kuke.board.comment.service.response.CommentPageResponse
 import kuke.board.comment.service.response.CommentResponse
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.CommentCreatedEventPayload
+import kuke.board.common.event.payload.CommentDeletedEventPayload
+import kuke.board.common.outboxmessagerelay.OutboxEventPublisher
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +21,8 @@ import java.util.function.Predicate
 @Service
 class CommentServiceV2(
     private val commentRepositoryV2: CommentRepositoryV2,
-    private val articleCommentCountRepository: ArticleCommentCountRepository
+    private val articleCommentCountRepository: ArticleCommentCountRepository,
+    private val outboxEventPublisher: OutboxEventPublisher
 ) {
     private val snowflake = Snowflake()
 
@@ -46,6 +51,21 @@ class CommentServiceV2(
                 ArticleCommentCount.init(articleId = request.articleId, commentCount = 1L)
             )
         }
+        
+        outboxEventPublisher.publish(
+            EventType.COMMENT_CREATED,
+            CommentCreatedEventPayload(
+                commentId = comment.commentId,
+                content = comment.content,
+                path = comment.commentPath.path,
+                articleId = comment.articleId,
+                writerId = comment.writerId,
+                deleted = comment.deleted,
+                createdAt = comment.createdAt,
+                articleCommentCount = count(comment.articleId),
+            ),
+            comment.articleId
+        )
         return CommentResponse.from(comment)
     }
 
@@ -75,8 +95,22 @@ class CommentServiceV2(
                 } else {
                     delete(it)
                 }
-            }
 
+                outboxEventPublisher.publish(
+                    EventType.COMMENT_DELETED,
+                    CommentDeletedEventPayload(
+                        commentId = it.commentId,
+                        content = it.content,
+                        path = it.commentPath.path,
+                        articleId = it.articleId,
+                        writerId = it.writerId,
+                        deleted = it.deleted,
+                        createdAt = it.createdAt,
+                        articleCommentCount = count(it.articleId),
+                    ),
+                    it.articleId
+                )
+            }
     }
 
     private fun hasChildren(comment: CommentV2): Boolean {
