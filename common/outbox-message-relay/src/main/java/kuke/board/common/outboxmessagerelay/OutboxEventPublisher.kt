@@ -1,9 +1,9 @@
 package kuke.board.common.outboxmessagerelay
 
+import kuke.board.common.DataSerializer
 import kuke.board.common.event.Event
 import kuke.board.common.event.EventPayload
 import kuke.board.common.event.EventType
-import kuke.board.common.event.toJson
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.context.ApplicationEventPublisher
 
@@ -18,13 +18,16 @@ class OutboxEventPublisher(
         val outbox = Outbox.create(
             outboxId = outboxIdSnowflake.nextId(),
             eventType = type,
-            payload = Event.of(
+            payload = Event(
                 eventId = eventIdSnowflake.nextId(),
                 type = type,
-                eventPayload = payload
+                payload = payload
             ).toJson(),
             shardKey = shardKey % MessageRelayConstants.SHARD_COUNT
         )
         applicationEventPublisher.publishEvent(OutboxEvent.of(outbox))
     }
 }
+
+fun <T : EventPayload> Event<T>.toJson()
+= DataSerializer.serialize(this) ?: throw RuntimeException("Json 변환 오류")
