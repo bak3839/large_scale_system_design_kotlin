@@ -37,11 +37,11 @@ class MessageRelayCoordinator(
         redisTemplate.executePipelined { action ->
             val conn = action as StringRedisConnection
             val key = generateKey()
-            conn.zAdd(key, Instant.now().toEpochMilli(), APP_ID)
+            conn.zAdd(key, Instant.now().toEpochMilli().toDouble(), APP_ID)
             conn.zRemRangeByScore(
                 key,
                 Double.NEGATIVE_INFINITY,
-                Instant.now().minusSeconds(PING_INTERVAL_SECONDS * PING_FAILURE_THRESHOLD).toEpochMilli()
+                Instant.now().minusSeconds(PING_INTERVAL_SECONDS * PING_FAILURE_THRESHOLD).toEpochMilli().toDouble()
             )
             null
         }

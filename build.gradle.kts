@@ -28,8 +28,6 @@ allprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
     apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
-    apply(plugin = "org.jetbrains.kotlin.plugin.lombok")
-    apply(plugin = "io.freefair.lombok")
 
     allOpen {
         annotation("jakarta.persistence.Entity")
@@ -56,20 +54,12 @@ allprojects {
         // kotlin 직렬화
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-        // Lombok 의존성
-        compileOnly("org.projectlombok:lombok:1.18.30")
-        annotationProcessor("org.projectlombok:lombok:1.18.30")
-
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testImplementation(kotlin("test"))
 
         testImplementation("io.mockk:mockk:1.13.8")
         testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
-
-        // 테스트 코드에서도 @Slf4j 사용 가능하게
-        testCompileOnly("org.projectlombok:lombok:1.18.30")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
 
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
