@@ -4,9 +4,12 @@ import kuke.board.common.DataSerializer
 import kuke.board.common.event.Event
 import kuke.board.common.event.EventPayload
 import kuke.board.common.event.EventType
+import kuke.board.common.event.toJson
 import kuke.board.common.snowflake.Snowflake
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.stereotype.Component
 
+@Component
 class OutboxEventPublisher(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -28,6 +31,3 @@ class OutboxEventPublisher(
         applicationEventPublisher.publishEvent(OutboxEvent.of(outbox))
     }
 }
-
-fun <T : EventPayload> Event<T>.toJson()
-= DataSerializer.serialize(this) ?: throw RuntimeException("Json 변환 오류")
