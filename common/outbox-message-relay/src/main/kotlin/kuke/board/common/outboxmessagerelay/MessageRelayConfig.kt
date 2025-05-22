@@ -2,23 +2,25 @@ package kuke.board.common.outboxmessagerelay
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.scheduling.TaskScheduler
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
+
 @EnableAsync // 카프카 이벤트 전송을 비동기로 처리하기 위함
 @Configuration
-@ComponentScan("kuke.board.common.outboxmessagerelay")
+@ComponentScan(basePackages = ["kuke.board.common.outboxmessagerelay", "kuke.board.common.event"])
 class MessageRelayConfig {
-    @Value("\${spring.kafka.bootstrap-servers}")
-    private lateinit var bootstrapServers: String
+    //@Value("\${spring.kafka.bootstrap-servers}")
+    private var bootstrapServers: String = "127.0.0.1:9092"
 
     @Bean
     fun messageRelayKafkaTemplate(): KafkaTemplate<String, String> {
@@ -42,7 +44,11 @@ class MessageRelayConfig {
     }
 
     @Bean
-    fun messageRelayPublishPendingEventExecutor(): Executor {
-        return Executors.newSingleThreadScheduledExecutor()
+    fun messageRelayPublishPendingEventExecutor(): TaskScheduler {
+        val scheduler = ThreadPoolTaskScheduler()
+        scheduler.poolSize = 1
+        scheduler.setThreadNamePrefix("task-scheduler-")
+        scheduler.initialize()
+        return scheduler
     }
 }

@@ -10,6 +10,10 @@ class Event<T: EventPayload>(
     val type: EventType,
     val payload: T
 ) {
+    fun toJson()
+            = DataSerializer.serialize(this)
+        ?: throw RuntimeException("Json 변환 오류")
+
     companion object {
         fun of(eventId: Long, type: EventType, eventPayload: EventPayload): Event<EventPayload> {
             return Event(
@@ -32,10 +36,6 @@ class Event<T: EventPayload>(
             )
         }
 
-//        fun toJson()
-//        = DataSerializer.serialize(this)
-//            ?: throw RuntimeException("Json 변환 오류")
-
         private class EventRaw @JsonCreator constructor(
             @JsonProperty("eventId") val eventId: Long,
             @JsonProperty("type") val type: String,
@@ -43,6 +43,3 @@ class Event<T: EventPayload>(
         )
     }
 }
-
-fun <T : EventPayload> Event<T>.toJson()
-= DataSerializer.serialize(this) ?: throw RuntimeException("Json 변환 오류")

@@ -16,12 +16,17 @@ class AssignedShard(
 
             val start = appIndex * shardCount / appIds.size
             val end = (appIndex + 1) * shardCount / appIds.size - 1
+
             return LongStream.rangeClosed(start, end).boxed().toList()
         }
 
         // appIds: 실행된 애플리케이션 목록을 정렬 상태로 가지고 있음
         // appId: 몇 번째 index 인지 반환
-        private fun findAppIndex(appId: String, appIds: List<String>): Int
-                = appIds.indexOf(appId)
+        private fun findAppIndex(appId: String, appIds: List<String>): Int {
+            for(i in 0 until appIds.size) {
+                if(appIds[i] == appId) { return i }
+            }
+            return -1
+        }
     }
 }
