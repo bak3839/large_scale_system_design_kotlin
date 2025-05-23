@@ -2,6 +2,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.kafka:spring-kafka")
-    implementation(project(":common:snowflake"))
     implementation(project(":common:event"))
 }

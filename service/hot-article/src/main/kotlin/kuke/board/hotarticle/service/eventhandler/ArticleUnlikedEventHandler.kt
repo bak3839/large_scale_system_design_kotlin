@@ -5,7 +5,9 @@ import kuke.board.common.event.EventType
 import kuke.board.common.event.payload.ArticleUnlikedEventPayload
 import kuke.board.hotarticle.repository.ArticleLikeCountRepository
 import kuke.board.hotarticle.utils.TimeCalculatorUtils
+import org.springframework.stereotype.Component
 
+@Component
 class ArticleUnlikedEventHandler(
     private val articleLikeCountRepository: ArticleLikeCountRepository
 ): EventHandler<ArticleUnlikedEventPayload> {

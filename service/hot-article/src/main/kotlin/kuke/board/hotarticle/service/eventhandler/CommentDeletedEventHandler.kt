@@ -6,7 +6,9 @@ import kuke.board.common.event.payload.CommentCreatedEventPayload
 import kuke.board.common.event.payload.CommentDeletedEventPayload
 import kuke.board.hotarticle.repository.ArticleCommentCountRepository
 import kuke.board.hotarticle.utils.TimeCalculatorUtils
+import org.springframework.stereotype.Component
 
+@Component
 class CommentDeletedEventHandler(
     private val articleCommentCountRepository: ArticleCommentCountRepository,
 ): EventHandler<CommentDeletedEventPayload> {

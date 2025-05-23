@@ -1,4 +1,4 @@
-package kuke.board.consumer
+package kuke.board.hotarticle.consumer
 
 import kuke.board.common.event.Event
 import kuke.board.common.event.EventType
@@ -18,16 +18,15 @@ class HotArticleEventConsumer(
         EventType.Companion.Topic.KUKE_BOARD_ARTICLE,
         EventType.Companion.Topic.KUKE_BOARD_COMMENT,
         EventType.Companion.Topic.KUKE_BOARD_LIKE,
-        EventType.Companion.Topic.KUKE_BOARD_VIEW,
-    ])
+        EventType.Companion.Topic.KUKE_BOARD_VIEW]
+    )
     fun listen(message: String, ack: Acknowledgment) {
         log.info {"[HotArticleEventConsumer.listen] received message=$message]"}
         Event.fromJson(message)?.let {
             hotArticleService.handleEvent(it)
-        }
+        } ?: log.warn { "Invalid event format: $message" }
 
         // 해당 메시지가 잘 처리되었다는 것을 카프카에게 알려줌
         ack.acknowledge()
     }
-
 }

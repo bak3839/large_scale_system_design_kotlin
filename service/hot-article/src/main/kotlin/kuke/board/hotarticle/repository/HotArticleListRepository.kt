@@ -22,6 +22,7 @@ class HotArticleListRepository(
 
     fun add(articleId: Long, time: LocalDateTime, score: Long, limit: Long, ttl: Duration) {
         // 파이프를 통해 한 번의 연결로 여러번의 연산 가능
+        log.info { "[HotArticleListRepository.add()] Adding $articleId to $time" }
         redisTemplate.executePipelined {
             val conn = it as StringRedisConnection
             val key = generateKey(time)

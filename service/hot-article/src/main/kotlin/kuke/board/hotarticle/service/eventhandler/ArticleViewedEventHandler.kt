@@ -5,7 +5,9 @@ import kuke.board.common.event.EventType
 import kuke.board.common.event.payload.ArticleViewedEventPayload
 import kuke.board.hotarticle.repository.ArticleViewCountRepository
 import kuke.board.hotarticle.utils.TimeCalculatorUtils
+import org.springframework.stereotype.Component
 
+@Component
 class ArticleViewedEventHandler(
     private val articleViewCountRepository: ArticleViewCountRepository
 ): EventHandler<ArticleViewedEventPayload> {

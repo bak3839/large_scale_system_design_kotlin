@@ -58,7 +58,7 @@ class MessageRelay(
     )
     fun publishPendingEvent() {
         val assignShards = messageRelayCoordinator.assignShards()
-        log.info { "[MessageRelay.publishPendingEvent] assignedShard size=${assignShards.shards.size}" }
+        //log.info { "[MessageRelay.publishPendingEvent] assignedShard size=${assignShards.shards.size}" }
         assignShards.shards.forEach { shard ->
             val outboxes = outboxRepository.findAllByShardKeyAndCreatedAtLessThanEqualOrderByCreatedAtAsc(
                     shard,

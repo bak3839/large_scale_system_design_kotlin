@@ -2,6 +2,7 @@ package kuke.board.common.outboxmessagerelay
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -17,10 +18,10 @@ import java.util.concurrent.Executors
 
 @EnableAsync // 카프카 이벤트 전송을 비동기로 처리하기 위함
 @Configuration
-@ComponentScan(basePackages = ["kuke.board.common.outboxmessagerelay", "kuke.board.common.event"])
+@ComponentScan(basePackages = ["kuke.board.common.outboxmessagerelay"])
 class MessageRelayConfig {
-    //@Value("\${spring.kafka.bootstrap-servers}")
-    private var bootstrapServers: String = "127.0.0.1:9092"
+    @Value("\${spring.kafka.bootstrap-servers}")
+    private lateinit var  bootstrapServers: String
 
     @Bean
     fun messageRelayKafkaTemplate(): KafkaTemplate<String, String> {
