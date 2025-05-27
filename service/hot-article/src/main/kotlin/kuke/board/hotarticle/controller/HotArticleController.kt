@@ -18,6 +18,4 @@ class HotArticleController(
         @PathVariable("dateStr") dateStr: String,
     ): List<HotArticleResponse>
     = hotArticleService.readAll(dateStr)
-
-
 }
