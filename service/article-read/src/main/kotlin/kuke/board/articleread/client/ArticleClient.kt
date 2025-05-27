@@ -42,7 +42,7 @@ class ArticleClient {
             var boardId: Long, // shard key
             var writerId: Long,
             var createdAt: LocalDateTime = LocalDateTime.now(),
-            var updatedAt: LocalDateTime = LocalDateTime.now(),
+            var modifiedAt: LocalDateTime = LocalDateTime.now(),
         )
     }
 }
