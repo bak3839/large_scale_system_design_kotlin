@@ -2,10 +2,12 @@ package kuke.board.articleread.repository
 
 import kuke.board.common.DataSerializer
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.stereotype.Repository
 import java.time.Duration
 
 const val KEY_FORMAT = "article-read::article::%s"
 
+@Repository
 class ArticleQueryModelRepository(
     private val redisTemplate: StringRedisTemplate
 ) {
@@ -20,8 +22,8 @@ class ArticleQueryModelRepository(
             .setIfPresent(generateKey(articleQueryModel), DataSerializer.serialize(articleQueryModel)!!)
     }
 
-    fun delete(articleQueryModel: ArticleQueryModel) {
-        redisTemplate.delete(generateKey(articleQueryModel))
+    fun delete(articleId: Long) {
+        redisTemplate.delete(generateKey(articleId))
     }
 
     fun read(articleId: Long): ArticleQueryModel? {
