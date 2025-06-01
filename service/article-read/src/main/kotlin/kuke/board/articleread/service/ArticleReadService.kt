@@ -37,8 +37,9 @@ class ArticleReadService(
     }
 
     fun read(articleId: Long): ArticleReadResponse {
-        val articleQueryModel = articleQueryModelRepository.read(articleId)?.let { fetch(articleId) }
-            ?:throw IllegalStateException("Article query model not found")
+        val articleQueryModel = articleQueryModelRepository.read(articleId)
+            ?: fetch(articleId)
+            ?: throw IllegalStateException("Article does not exist")
 
         return ArticleReadResponse.from(
             articleQueryModel,

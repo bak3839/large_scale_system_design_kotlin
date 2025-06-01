@@ -15,6 +15,18 @@ class ArticleQueryModel(
     var articleCommentCount: Long,
     var articleLikeCount: Long,
 ) {
+    constructor() : this(
+        articleId = 0L,
+        title = "",
+        content = "",
+        boardId = 0L,
+        writerId = 0L,
+        createdAt = LocalDateTime.now(),
+        modifiedAt = LocalDateTime.now(),
+        articleCommentCount = 0L,
+        articleLikeCount = 0L
+    )
+
     companion object {
         fun create(payload: ArticleCreatedEventPayload): ArticleQueryModel {
             return ArticleQueryModel(

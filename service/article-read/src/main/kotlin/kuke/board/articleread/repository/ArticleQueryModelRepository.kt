@@ -28,7 +28,7 @@ class ArticleQueryModelRepository(
 
     fun read(articleId: Long): ArticleQueryModel? {
         val json = redisTemplate.opsForValue().get(generateKey(articleId))
-            ?: throw NoSuchElementException("Article with id $articleId not found")
+            ?: return null
         return DataSerializer.deserialize(json, ArticleQueryModel::class.java)
     }
 
