@@ -5,12 +5,13 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
 import java.time.Duration
 
-const val KEY_FORMAT = "article-read::article::%s"
-
 @Repository
 class ArticleQueryModelRepository(
     private val redisTemplate: StringRedisTemplate
 ) {
+    companion object {
+        private val KEY_FORMAT = "article-read::article::%s"
+    }
 
     fun create(articleQueryModel: ArticleQueryModel, ttl: Duration) {
         redisTemplate.opsForValue()
