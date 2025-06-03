@@ -4,9 +4,12 @@ import kuke.board.articleread.client.ArticleClient
 import kuke.board.articleread.client.CommentClient
 import kuke.board.articleread.client.LikeClient
 import kuke.board.articleread.client.ViewClient
+import kuke.board.articleread.repository.ArticleIdListRepository
 import kuke.board.articleread.repository.ArticleQueryModel
 import kuke.board.articleread.repository.ArticleQueryModelRepository
+import kuke.board.articleread.repository.BoardArticleCountRepository
 import kuke.board.articleread.service.event.handler.EventHandler
+import kuke.board.articleread.service.response.ArticleReadPageResponse
 import kuke.board.articleread.service.response.ArticleReadResponse
 import kuke.board.common.event.Event
 import kuke.board.common.event.EventPayload
@@ -21,7 +24,9 @@ class ArticleReadService(
     private val viewClient: ViewClient,
     private val likeClient: LikeClient,
     private val articleQueryModelRepository: ArticleQueryModelRepository,
-    private val eventHandlers: List<EventHandler<*>>
+    private val eventHandlers: List<EventHandler<*>>,
+    private val articleIdListRepository: ArticleIdListRepository,
+    private val boardArticleCountRepository: BoardArticleCountRepository
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -29,8 +34,8 @@ class ArticleReadService(
         @Suppress("UNCHECKED_CAST")
         eventHandlers as List<EventHandler<EventPayload>>
 
-        for(eventHandler in eventHandlers) {
-            if(eventHandler.supports(event)) {
+        for (eventHandler in eventHandlers) {
+            if (eventHandler.supports(event)) {
                 eventHandler.handle(event)
             }
         }
@@ -59,5 +64,68 @@ class ArticleReadService(
             articleQueryModelRepository.create(articleQueryModel, Duration.ofDays(1))
             articleQueryModel
         }
+    }
+
+    fun readAll(boardId: Long, page: Long, pageSize: Long): ArticleReadPageResponse {
+        return ArticleReadPageResponse.of(
+            readAll(
+                readAllArticleIds(boardId, page, pageSize),
+            ),
+            count(boardId)
+        )
+    }
+
+    fun readAllArticleIds(boardId: Long, page: Long, pageSize: Long): List<Long> {
+        val articleIds = articleIdListRepository.readAll(boardId, (page - 1) * pageSize, pageSize)
+        if (pageSize == articleIds.size.toLong()) {
+            log.info { "[ArticleReadService.readAllArticleIds] return redis data." }
+            return articleIds
+        }
+
+        log.info { "[ArticleReadService.readAllArticleIds] return origin data." }
+        return articleClient.readAll(boardId, page, pageSize)?.articles
+            ?.map(ArticleClient.Companion.ArticleResponse::articleId)
+            ?: emptyList()
+    }
+
+    fun readAllInfiniteScroll(boardId: Long, lastArticleId: Long, pageSize: Long): List<ArticleReadResponse> {
+        return readAll(
+            readAllInfiniteScrollArticleIds(boardId, lastArticleId, pageSize),
+        )
+    }
+
+    fun readAllInfiniteScrollArticleIds(boardId: Long, lastArticleId: Long, pageSize: Long): List<Long> {
+        val articleIds = articleIdListRepository.readAll(boardId, lastArticleId, pageSize)
+        if(pageSize == articleIds.size.toLong()) {
+            log.info { "[ArticleReadService.readAllArticleIds] return redis data." }
+            return articleIds
+        }
+
+        log.info { "[ArticleReadService.readAllArticleIds] return origin data." }
+        return articleClient.readAllInfiniteScroll(boardId, lastArticleId, pageSize)
+            ?.map(ArticleClient.Companion.ArticleResponse::articleId)
+            ?: emptyList()
+    }
+
+    private fun readAll(articleIds: List<Long>): List<ArticleReadResponse> {
+        val articleQueryModelMap = articleQueryModelRepository.readAll(articleIds)
+
+        return articleIds.mapNotNull { articleId ->
+            if (articleQueryModelMap.contains(articleId)) articleQueryModelMap[articleId]
+            else fetch(articleId)
+        }.map { articleQueryModel ->
+            ArticleReadResponse.from(
+                articleQueryModel = articleQueryModel,
+                viewCount = viewClient.count(articleQueryModel.articleId)
+            )
+        }
+    }
+
+    private fun count(boardId: Long): Long {
+        boardArticleCountRepository.read(boardId)?.let { return it }
+
+        val count = articleClient.count(boardId)
+        boardArticleCountRepository.createOrUpdate(boardId, count)
+        return count
     }
 }

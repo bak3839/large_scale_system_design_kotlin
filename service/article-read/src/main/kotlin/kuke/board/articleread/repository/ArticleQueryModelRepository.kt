@@ -4,6 +4,8 @@ import kuke.board.common.DataSerializer
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
 import java.time.Duration
+import java.util.Collections
+import java.util.Objects
 
 @Repository
 class ArticleQueryModelRepository(
@@ -38,4 +40,12 @@ class ArticleQueryModelRepository(
 
     private fun generateKey(articleId: Long): String
     = KEY_FORMAT.format(articleId)
+
+    fun readAll(articleIds: List<Long>): Map<Long, ArticleQueryModel> {
+        val keyList = articleIds.map(this::generateKey)
+        return redisTemplate.opsForValue().multiGet(keyList)!!
+            .filterNotNull()
+            .map { json -> DataSerializer.deserialize(json, ArticleQueryModel::class.java)!!}
+            .associateBy { it.articleId }
+    }
 }

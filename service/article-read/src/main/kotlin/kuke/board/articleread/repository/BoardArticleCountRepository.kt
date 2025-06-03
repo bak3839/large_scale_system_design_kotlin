@@ -17,9 +17,9 @@ class BoardArticleCountRepository(
         redisTemplate.opsForValue().set(generateKey(boardId), articleCount.toString())
     }
 
-    fun read(boardId: Long): Long {
+    fun read(boardId: Long): Long? {
         val result = redisTemplate.opsForValue().get(generateKey(boardId))
-        return result?.toLong() ?: 0L
+        return result?.toLong()
     }
 
     private fun generateKey(boardId: Long): String
