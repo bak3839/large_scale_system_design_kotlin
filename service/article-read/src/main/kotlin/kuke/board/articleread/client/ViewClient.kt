@@ -1,6 +1,7 @@
 package kuke.board.articleread.client
 
 import jakarta.annotation.PostConstruct
+import kuke.board.articleread.cache.OptimizedCacheable
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
@@ -21,7 +22,8 @@ class ViewClient {
         restClient = RestClient.create(viewServiceUrl)
     }
 
-    @Cacheable(key = "#articleId", value = ["articleViewCount"])
+    //@Cacheable(key = "#articleId", value = ["articleViewCount"])
+    @OptimizedCacheable(type = "articleViewCount", ttlSeconds = 1)
     fun count(articleId: Long): Long {
         log.info { "[ViewClient.count] $articleId" }
         try {
