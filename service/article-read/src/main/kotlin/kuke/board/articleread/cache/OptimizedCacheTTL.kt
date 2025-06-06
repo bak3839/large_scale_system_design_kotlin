@@ -7,7 +7,7 @@ class OptimizedCacheTTL(
     val physicalTTL: Duration
 ) {
     companion object {
-        val PHYSICAL_TTL_DELAY_SECONDS = 5L
+        const val PHYSICAL_TTL_DELAY_SECONDS = 5L
 
         fun of(ttlSeconds: Long): OptimizedCacheTTL
         = OptimizedCacheTTL(
